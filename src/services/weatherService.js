@@ -6,8 +6,8 @@ export default class WeatherService {
     "Access-Control-Allow-Credentials": '*',
   };
 
-  static requestWeather(zipCode, callback, errorMessage) {
-    return fetch(constants.ZIP_API_URL(zipCode), {
+  static requestWeather(zipCode, tempScale, callback, errorMessage) {
+    return fetch(constants.ZIP_API_URL(zipCode, tempScale), {
       mode: 'cors',
       method: "GET",
       headers: this.headers,

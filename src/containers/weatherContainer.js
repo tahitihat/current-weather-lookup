@@ -9,7 +9,7 @@ class WeatherContainer extends Component {
     super(props);
 
     this.state = {
-      celsius: false,
+      fahrenheit: true,
       city: "",
       state: "",
       zipCode: "",
@@ -18,29 +18,40 @@ class WeatherContainer extends Component {
     };
     this.handleRequestSubmit = this.handleRequestSubmit.bind(this);
     this.onChangeHandler = this.onChangeHandler.bind(this);
+    this.onTempScaleChanged = this.onTempScaleChanged.bind(this);
   }
 
   handleRequestSubmit() {
-      WeatherService.requestWeather(
-        this.state.zipCode,
-        (response) => {
-          this.setState({
-            returnWeather: response,
-            city: "",
-            state: "",
-            zipCode: "",
-          });
-        },
-      )
+    const tempScale = this.state.fahrenheit ? 'imperial' : 'metric';
+
+    WeatherService.requestWeather(
+      this.state.zipCode,
+      tempScale,
+      (response) => {
+        this.setState({
+          returnWeather: response,
+          city: "",
+          state: "",
+          zipCode: "",
+        });
+      },
+    )
   }
 
   onChangeHandler(event) {
-    console.log(event)
     const name = event.target.name;
     const value = event.target.value;
   
     this.setState({[name]: value});
-}
+  }
+
+  onTempScaleChanged(_) {
+    const currentTempScale = this.state.fahrenheit;
+
+    this.setState({
+      fahrenheit: !currentTempScale
+    });
+  }
 
   render() {
     return (
@@ -92,6 +103,8 @@ class WeatherContainer extends Component {
                   label="Fahrenheit"
                   name="temperatureRadios"
                   id="fahrenheitRadio"
+                  checked={this.state.fahrenheit}
+                  onChange={this.onTempScaleChanged}
                 />
                 <Form.Check
                   inline
@@ -99,6 +112,8 @@ class WeatherContainer extends Component {
                   label="Celsius"
                   name="temperatureRadios"
                   id="celsiusRadio"
+                  checked={!this.state.fahrenheit}
+                  onChange={this.onTempScaleChanged}
                 />
               </div>
             </Form.Group>

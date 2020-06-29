@@ -1,5 +1,8 @@
 Project submission for the Framework Software Engineering Co-op take-home coding challenge. The project was built in React using [create-react-app](https://reactjs.org/docs/create-a-new-react-app.html), and styled with [Bootstrap](https://getbootstrap.com/docs/4.5/getting-started/introduction/). 
 
+## Explore app
+The app is temporarily hosted using github pages at http://isabeltripp.me/current-weather-lookup/.
+
 ## Set up locally 
 Requirements: npm installation on local machine. See: [Get npm](https://www.npmjs.com/get-npm).
 

@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 
+import Select from "../components/select";
+import * as stateData from "../utils/stateData";
 import WeatherService from "../services/weatherService";
 
 /*
@@ -16,7 +18,7 @@ class WeatherContainer extends Component {
       fahrenheit: true,
       locationInput: {
         city: "",
-        state: "",
+        state: stateData.STATE_NAMES[0],
         zipCode: "",
       },
       returnWeather: {},
@@ -29,29 +31,35 @@ class WeatherContainer extends Component {
 
   /* 
     Form submit handler. Pass params from user input (stored in state) 
-    to appropriate WeatherService method.
+    to appropriate WeatherService method. requestWeatherByZip is called 
+    if the zipCode field of state is populated, while requestWeatherByCity
+    is called if both the city and state fields of state are populated.
   */
   handleRequestSubmit() {
-    const tempScale = this.state.fahrenheit ? 'imperial' : 'metric';
+    const responseCallback = (response) => {
+      this.setState({
+        returnWeather: response,
+        renderErrorMessage: false
+      });
+    };
 
-    WeatherService.requestWeather(
-      this.state.locationInput.zipCode,
-      tempScale,
-      (response) => {
-        this.setState({
-          returnWeather: response,
-          locationInput: {
-            city: "",
-            state: "",
-            zipCode: ""
-          },
-          renderErrorMessage: false
-        });
-      },
-      (errorMessage) => {
-        this.setState({ renderErrorMessage: true });
-      }
-    )
+    if (this.state.locationInput.zipCode) {
+      WeatherService.requestWeatherByZip(
+        this.state.locationInput.zipCode,
+        this.state.fahrenheit,
+        responseCallback,
+        (errorMessage) => this.setState({ renderErrorMessage: true }),
+
+      )
+    } else if (this.state.locationInput.city && this.state.locationInput.state) {
+      WeatherService.requestWeatherByCity(
+        this.state.locationInput.city,
+        this.state.locationInput.state,
+        this.state.fahrenheit,
+        responseCallback,
+        (errorMessage) => this.setState({ renderErrorMessage: true }),
+      )    
+    }
   }
 
   /* 
@@ -60,7 +68,7 @@ class WeatherContainer extends Component {
   onInputChange(event) {
     const name = event.target.name;
     const value = event.target.value;
-  
+
     this.setState({
       locationInput: {
         ...this.state.locationInput,
@@ -103,17 +111,14 @@ class WeatherContainer extends Component {
                   placeholder="Enter city" 
                   onChange={this.onInputChange}
                 />            
-                </Form.Group>
-              <Form.Group controlId="formState">
-                <Form.Label>State</Form.Label>
-                <Form.Control 
-                  name="state"
-                  value={state}
-                  type="text" 
-                  placeholder="Enter state" 
-                  onChange={this.onInputChange}
-                />
               </Form.Group>
+              <Select
+                title="State"
+                name="state"
+                options={stateData.STATE_NAMES}
+                placeholder="Select a state"
+                onChange={this.onInputChange}
+              />
             </Form.Row>
             <Form.Group controlId="formZip">
               <Form.Label>Zip Code</Form.Label>

@@ -106,7 +106,7 @@ class WeatherContainer extends Component {
             </Form.Label>
 
             <Form.Row>
-              <Form.Group controlId="formCity">
+              <Form.Group controlId="formCity" style={{ marginRight: '1rem' }}>
                 <Form.Label>City</Form.Label>
                 <Form.Control
                   name="city"
@@ -136,7 +136,7 @@ class WeatherContainer extends Component {
             </Form.Group>
 
             <Form.Group>
-              <Form.Text>Temperature scale</Form.Text>
+              <Form.Label>Temperature scale</Form.Label>
               <div key="inline-radio" className="mb-3">
                 <Form.Check
                   inline

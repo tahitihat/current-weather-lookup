@@ -3,8 +3,12 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 
 import Select from "../components/select";
-import * as stateData from "../utils/stateData";
+import WeatherDisplay from "../components/weatherDisplay";
+
 import WeatherService from "../services/weatherService";
+
+import * as stateData from "../utils/stateData";
+
 
 /*
 React Container for handling user form input and rendering 
@@ -21,7 +25,7 @@ class WeatherContainer extends Component {
         state: stateData.STATE_NAMES[0],
         zipCode: "",
       },
-      returnWeather: {},
+      weatherResponse: {},
       renderErrorMessage: false
     };
     this.handleRequestSubmit = this.handleRequestSubmit.bind(this);
@@ -38,7 +42,7 @@ class WeatherContainer extends Component {
   handleRequestSubmit() {
     const responseCallback = (response) => {
       this.setState({
-        returnWeather: response,
+        weatherResponse: response,
         renderErrorMessage: false
       });
     };
@@ -58,7 +62,7 @@ class WeatherContainer extends Component {
         this.state.fahrenheit,
         responseCallback,
         (errorMessage) => this.setState({ renderErrorMessage: true }),
-      )    
+      )
     }
   }
 
@@ -90,27 +94,27 @@ class WeatherContainer extends Component {
 
 
   render() {
-    const { fahrenheit, locationInput, returnWeather, renderErrorMessage } = this.state;
+    const { fahrenheit, locationInput, weatherResponse, renderErrorMessage } = this.state;
     const { city, state, zipCode } = locationInput;
 
     return (
       <div className="container">
         <div className="col">
-          <Form>
-            <Form.Text>
+          <Form style={{ marginBottom: '3rem' }}>
+            <Form.Label>
               Enter a city and state in the United States or an American zip code to check the current weather.
-            </Form.Text>
+            </Form.Label>
 
             <Form.Row>
               <Form.Group controlId="formCity">
                 <Form.Label>City</Form.Label>
-                <Form.Control 
+                <Form.Control
                   name="city"
                   value={city}
-                  type="text" 
-                  placeholder="Enter city" 
+                  type="text"
+                  placeholder="Enter city"
                   onChange={this.onInputChange}
-                />            
+                />
               </Form.Group>
               <Select
                 title="State"
@@ -122,11 +126,11 @@ class WeatherContainer extends Component {
             </Form.Row>
             <Form.Group controlId="formZip">
               <Form.Label>Zip Code</Form.Label>
-              <Form.Control 
+              <Form.Control
                 name="zipCode"
                 value={zipCode}
-                type="text" 
-                placeholder="Enter zip code" 
+                type="text"
+                placeholder="Enter zip code"
                 onChange={this.onInputChange}
               />
             </Form.Group>
@@ -155,14 +159,16 @@ class WeatherContainer extends Component {
               </div>
             </Form.Group>
 
-            <Button variant="secondary" onClick={this.handleRequestSubmit}>
+            <Button
+              variant="secondary"
+              disabled={!(zipCode || (city && state))}
+              onClick={this.handleRequestSubmit}
+            >
               Submit
             </Button>
-          </Form>          
+          </Form>
 
-          <div className="col">
-            <p>{ JSON.stringify(returnWeather) }</p>
-          </div>
+          <WeatherDisplay weatherResponse={weatherResponse} isFahrenheit={this.state.fahrenheit} />
           {
             renderErrorMessage && (
               <h3>There was an error making the request. Please try again.</h3>

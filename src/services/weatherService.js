@@ -23,20 +23,20 @@ export default class WeatherService {
       .catch(errorMessage);
   }
 
-    /* 
-    Use fetch to send a city/state-based GET request to OpenWeatherData API.
-    */
-    static requestWeatherByCity(city, state, isFahrenheit, callback, errorMessage) {
-      const stateCode = stateData.STATE_NAME_TO_CODE[state];
-      const tempScale = isFahrenheit ? 'imperial' : 'metric';
+  /* 
+  Use fetch to send a city/state-based GET request to OpenWeatherData API.
+  */
+  static requestWeatherByCity(city, state, isFahrenheit, callback, errorMessage) {
+    const stateCode = stateData.STATE_NAME_TO_CODE[state];
+    const tempScale = isFahrenheit ? 'imperial' : 'metric';
 
-      return fetch(constants.CITY_API_URL(city, stateCode, tempScale), {
-        mode: 'cors',
-        method: "GET",
-        headers: this.headers,
-      })
-        .then((r) => r.json())
-        .then(callback)
-        .catch(errorMessage);
-    }
+    return fetch(constants.CITY_API_URL(city, stateCode, tempScale), {
+      mode: 'cors',
+      method: "GET",
+      headers: this.headers,
+    })
+      .then((r) => r.json())
+      .then(callback)
+      .catch(errorMessage);
+  }
 }
